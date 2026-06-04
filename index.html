@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hauck&Terra - Exportador de Logotipos</title>
+    <!-- Tailwind CSS para design moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts para tipografia elegante -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;800&family=Inter:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d131a;
+        }
+        .brand-font-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+        }
+        .brand-font-sub {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.25em;
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur px-6 py-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full border-2 border-cyan-400 flex items-center justify-center bg-slate-950">
+                    <span class="text-cyan-400 font-bold text-lg">H</span>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-wider">Hauck&Terra</h1>
+                    <p class="text-xs text-slate-400 uppercase tracking-widest">Identidade & Saúde • Exportador de Assets</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <button onclick="toggleGithubModal(true)" class="bg-slate-800 hover:bg-slate-700 border border-slate-750 text-slate-200 font-medium py-2 px-4 rounded-lg transition text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.193 22 16.435 22 12.017 22 6.484 17.522 2 12 2z"/></svg>
+                    Como Publicar no GitHub
+                </button>
+                <label class="bg-gradient-to-r from-cyan-500 to-orange-500 hover:from-cyan-600 hover:to-orange-600 text-white font-medium py-2 px-4 rounded-lg shadow-lg cursor-pointer transition text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    Carregar Imagem do Cérebro
+                    <input type="file" id="brain-upload" accept="image/*" class="hidden" onchange="handleBrainUpload(event)">
+                </label>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- Sidebar Controles -->
+        <div class="lg:col-span-1 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-6 h-fit">
+            <h2 class="text-xl font-bold border-b border-slate-800 pb-3">Configurações</h2>
+            
+            <!-- Brain Status Indicator -->
+            <div id="upload-status" class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-300 flex items-center gap-2">
+                <div class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></div>
+                Usando cérebro padrão (carregue o arquivo "cópia de neural_telemetry_orb_1780490653834.jpg" para máxima fidelidade).
+            </div>
+
+            <!-- Customização de Cores -->
+            <div class="space-y-4">
+                <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Cores da Marca</h3>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Tom Azul/Ciano</label>
+                    <div class="flex gap-2">
+                        <input type="color" id="color-blue" value="#45B6CE" class="w-8 h-8 rounded border border-slate-700 bg-transparent cursor-pointer" oninput="updateBrandStyles()">
+                        <input type="text" id="color-blue-text" value="#45B6CE" class="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs w-full text-slate-300" oninput="updateBrandStylesFromText()">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Tom Laranja/Terracota</label>
+                    <div class="flex gap-2">
+                        <input type="color" id="color-orange" value="#F98F66" class="w-8 h-8 rounded border border-slate-700 bg-transparent cursor-pointer" oninput="updateBrandStyles()">
+                        <input type="text" id="color-orange-text" value="#F98F66" class="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs w-full text-slate-300" oninput="updateBrandStylesFromText()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customização de Texto -->
+            <div class="space-y-4">
+                <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Tipografia</h3>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Título Principal</label>
+                    <input type="text" id="text-title" value="Hauck&Terra" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm text-white" oninput="updateBrandText()">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Subtítulo</label>
+                    <input type="text" id="text-subtitle" value="IDENTIDADE & SAÚDE" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm text-white" oninput="updateBrandText()">
+                </div>
+            </div>
+
+            <div class="pt-2 text-xs text-slate-500">
+                Desenvolvido para geração rápida e limpa de assets digitais. Os arquivos PNG gerados possuem fundo transparente onde aplicável.
+            </div>
+        </div>
+
+        <!-- Grid de Logotipos -->
+        <div class="lg:col-span-3 space-y-8">
+            
+            <!-- Seção 1: Aplicações Simples -->
+            <div class="space-y-4">
+                <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <span class="w-1.5 h-6 bg-cyan-500 rounded-full"></span>
+                    1. Aplicações Simples (Vetor/Ícone Clássico)
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Variação Escura -->
+                    <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between h-[300px]">
+                        <span class="text-xs uppercase tracking-widest text-slate-500">Original (Fundo Escuro)</span>
+                        <div class="flex items-center justify-center flex-1 my-4" id="logo-original-container">
+                            <!-- SVG Render -->
+                            <div id="logo-original-render" class="flex items-center gap-5 p-4 rounded-xl">
+                                <svg width="70" height="70" viewBox="0 0 100 100" class="flex-shrink-0">
+                                    <defs>
+                                        <linearGradient id="grad-ring" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" class="grad-stop-blue" stop-color="#45B6CE" />
+                                            <stop offset="100%" class="grad-stop-orange" stop-color="#F98F66" />
+                                        </linearGradient>
+                                    </defs>
+                                    <circle cx="50" cy="50" r="44" fill="none" stroke="url(#grad-ring)" stroke-width="7" />
+                                    <circle cx="50" cy="50" r="39" fill="#1A2533" />
+                                    <!-- Globe Icon -->
+                                    <circle cx="50" cy="50" r="18" fill="none" stroke="#FFFFFF" stroke-width="3.5" />
+                                    <line x1="32" y1="50" x2="68" y2="50" stroke="#FFFFFF" stroke-width="3.5" />
+                                    <path d="M 50 32 C 41 38, 41 62, 50 68" fill="none" stroke="#FFFFFF" stroke-width="3.5" />
+                                    <path d="M 50 32 C 59 38, 59 62, 50 68" fill="none" stroke="#FFFFFF" stroke-width="3.5" />
+                                </svg>
+                                <div class="text-left">
+                                    <h2 class="text-3xl font-extrabold text-white leading-none brand-title">Hauck&Terra</h2>
+                                    <p class="text-[10px] tracking-[0.22em] text-slate-400 mt-1 uppercase brand-subtitle">IDENTIDADE & SAÚDE</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="downloadLogo('original', 'escuro')" class="w-full bg-slate-900 hover:bg-slate-850 border border-slate-850 hover:border-slate-700 text-slate-300 hover:text-white py-2 px-4 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Baixar PNG de Alta Resolução
+                        </button>
+                    </div>
+
+                    <!-- Variação Monocromática Clara -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 flex flex-col justify-between h-[300px]">
+                        <span class="text-xs uppercase tracking-widest text-slate-400">Monocromático (Fundo Claro)</span>
+                        <div class="flex items-center justify-center flex-1 my-4">
+                            <div id="logo-mono-claro-render" class="flex items-center gap-5 p-4 rounded-xl">
+                                <svg width="70" height="70" viewBox="0 0 100 100" class="flex-shrink-0">
+                                    <circle cx="50" cy="50" r="44" fill="none" stroke="#000000" stroke-width="7" />
+                                    <!-- Globe Icon -->
+                                    <circle cx="50" cy="50" r="18" fill="none" stroke="#000000" stroke-width="3.5" />
+                                    <line x1="32" y1="50" x2="68" y2="50" stroke="#000000" stroke-width="3.5" />
+                                    <path d="M 50 32 C 41 38, 41 62, 50 68" fill="none" stroke="#000000" stroke-width="3.5" />
+                                    <path d="M 50 32 C 59 38, 59 62, 50 68" fill="none" stroke="#000000" stroke-width="3.5" />
+                                </svg>
+                                <div class="text-left">
+                                    <h2 class="text-3xl font-extrabold text-black leading-none brand-title">Hauck&Terra</h2>
+                                    <p class="text-[10px] tracking-[0.22em] text-slate-600 mt-1 uppercase brand-subtitle">IDENTIDADE & SAÚDE</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="downloadLogo('mono-claro', 'claro')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 py-2 px-4 rounded-xl text-sm transition flex items-center justify-center gap-2 font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Baixar PNG de Alta Resolução
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 2: Integração com Imagem (Cérebro) -->
+            <div class="space-y-4">
+                <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <span class="w-1.5 h-6 bg-orange-500 rounded-full"></span>
+                    2. Variações com Orbe Neural/Cérebro
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Cérebro Integrado Horizontal -->
+                    <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between h-[350px]">
+                        <span class="text-xs uppercase tracking-widest text-slate-500">Cérebro Integrado (Horizontal)</span>
+                        <div class="flex items-center justify-center flex-1 my-4">
+                            <div id="logo-brain-horiz-render" class="flex items-center gap-5 p-4 rounded-xl">
+                                <div class="relative w-[70px] h-[70px] flex-shrink-0 rounded-full overflow-hidden border-2 border-slate-800">
+                                    <canvas id="canvas-brain-icon-1" width="140" height="140" class="w-full h-full rounded-full bg-black"></canvas>
+                                </div>
+                                <div class="text-left">
+                                    <h2 class="text-3xl font-extrabold text-white leading-none brand-title">Hauck&Terra</h2>
+                                    <p class="text-[10px] tracking-[0.22em] text-slate-400 mt-1 uppercase brand-subtitle">IDENTIDADE & SAÚDE</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="downloadLogo('brain-horizontal', 'escuro')" class="w-full bg-slate-900 hover:bg-slate-850 border border-slate-850 hover:border-slate-700 text-slate-300 hover:text-white py-2 px-4 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Baixar PNG de Alta Resolução
+                        </button>
+                    </div>
+
+                    <!-- Anel Neural Vertical -->
+                    <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between h-[350px]">
+                        <span class="text-xs uppercase tracking-widest text-slate-500">Anel Neural (Vertical/Centralizado)</span>
+                        <div class="flex items-center justify-center flex-1 my-4">
+                            <div id="logo-brain-vert-render" class="flex flex-col items-center text-center p-4 rounded-xl">
+                                <div class="relative w-[80px] h-[80px] mb-3 rounded-full flex items-center justify-center p-1" style="background: linear-gradient(135deg, var(--color-blue, #45B6CE), var(--color-orange, #F98F66));">
+                                    <div class="w-full h-full rounded-full overflow-hidden bg-black border-2 border-black">
+                                        <canvas id="canvas-brain-icon-2" width="140" height="140" class="w-full h-full rounded-full"></canvas>
+                                    </div>
+                                </div>
+                                <h2 class="text-2xl font-extrabold text-white leading-none brand-title">Hauck&Terra</h2>
+                                <p class="text-[9px] tracking-[0.25em] text-slate-400 mt-1.5 uppercase brand-subtitle">IDENTIDADE & SAÚDE</p>
+                            </div>
+                        </div>
+                        <button onclick="downloadLogo('brain-vertical', 'escuro')" class="w-full bg-slate-900 hover:bg-slate-850 border border-slate-850 hover:border-slate-700 text-slate-300 hover:text-white py-2 px-4 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Baixar PNG de Alta Resolução
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 3: Apenas Ícones (Avatares/Favicons) -->
+            <div class="space-y-4">
+                <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <span class="w-1.5 h-6 bg-emerald-500 rounded-full"></span>
+                    3. Ícones Individuais (Para Perfis, Favicons ou Apps)
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <!-- Ícone 1: Globe Gradient -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col items-center justify-between h-[220px]">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-500 text-center">Globo Gradiente</span>
+                        <div id="icon-globe-render" class="p-2">
+                            <svg width="60" height="60" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="44" fill="none" stroke="url(#grad-ring)" stroke-width="7" />
+                                <circle cx="50" cy="50" r="39" fill="#1A2533" />
+                                <circle cx="50" cy="50" r="18" fill="none" stroke="#FFFFFF" stroke-width="3.5" />
+                                <line x1="32" y1="50" x2="68" y2="50" stroke="#FFFFFF" stroke-width="3.5" />
+                                <path d="M 50 32 C 41 38, 41 62, 50 68" fill="none" stroke="#FFFFFF" stroke-width="3.5" />
+                                <path d="M 50 32 C 59 38, 59 62, 50 68" fill="none" stroke="#FFFFFF" stroke-width="3.5" />
+                            </svg>
+                        </div>
+                        <button onclick="downloadLogo('icon-globe', 'escuro')" class="text-xs bg-slate-900 hover:bg-slate-800 py-1.5 px-3 rounded-lg text-slate-300 w-full text-center">
+                            Baixar Ícone
+                        </button>
+                    </div>
+
+                    <!-- Ícone 2: Orbe Pura -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col items-center justify-between h-[220px]">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-500 text-center">Orbe Neural Pura</span>
+                        <div class="w-[60px] h-[60px] rounded-full overflow-hidden border border-slate-800 bg-black">
+                            <canvas id="canvas-brain-icon-3" width="120" height="120" class="w-full h-full"></canvas>
+                        </div>
+                        <button onclick="downloadLogo('icon-brain-pure', 'escuro')" class="text-xs bg-slate-900 hover:bg-slate-800 py-1.5 px-3 rounded-lg text-slate-300 w-full text-center">
+                            Baixar Ícone
+                        </button>
+                    </div>
+
+                    <!-- Ícone 3: Anel Neural -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col items-center justify-between h-[220px]">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-500 text-center">Orbe com Anel</span>
+                        <div class="relative w-[64px] h-[64px] rounded-full flex items-center justify-center p-0.5" style="background: linear-gradient(135deg, var(--color-blue, #45B6CE), var(--color-orange, #F98F66));">
+                            <div class="w-full h-full rounded-full overflow-hidden bg-black border border-black">
+                                <canvas id="canvas-brain-icon-4" width="120" height="120" class="w-full h-full"></canvas>
+                            </div>
+                        </div>
+                        <button onclick="downloadLogo('icon-brain-ring', 'escuro')" class="text-xs bg-slate-900 hover:bg-slate-800 py-1.5 px-3 rounded-lg text-slate-300 w-full text-center">
+                            Baixar Ícone
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="border-t border-slate-800 bg-slate-950/80 px-6 py-4 text-center text-xs text-slate-500">
+        <p>© 2026 Hauck&Terra. Todos os direitos reservados. Exportador de Identidade Visual v1.2</p>
+    </footer>
+
+    <!-- Modal de Ajuda do GitHub -->
+    <div id="github-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div class="p-6 border-b border-slate-800 flex items-center justify-between sticky top-0 bg-slate-900 z-10">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 bg-emerald-500/10 rounded-lg text-emerald-400">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.193 22 16.435 22 12.017 22 6.484 17.522 2 12 2z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Como Hospedar no seu GitHub Pages</h3>
+                        <p class="text-xs text-slate-400">Publique este gerador online e de graça em menos de 2 minutos</p>
+                    </div>
+                </div>
+                <button onclick="toggleGithubModal(false)" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6 text-slate-300 text-sm leading-relaxed">
+                <!-- Passo 1 -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center font-bold text-sm">1</div>
+                    <div>
+                        <h4 class="font-semibold text-white text-base">Renomeie o arquivo</h4>
+                        <p class="text-slate-400 text-xs mt-1">Para o GitHub Pages reconhecer como a página inicial, mude o nome do arquivo baixado:</p>
+                        <div class="bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-850 font-mono text-xs text-cyan-300 mt-2 w-fit">
+                            gerador_logotipos_hauck_terra.html <span class="text-slate-500">➜</span> index.html
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Passo 2 -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center font-bold text-sm">2</div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-white text-base">Crie um novo Repositório</h4>
+                        <p class="text-slate-400 text-xs mt-1">Vá no seu GitHub (<a href="https://github.com/new" target="_blank" class="text-cyan-400 hover:underline">github.com/new</a>), crie um repositório chamado por exemplo <code class="bg-slate-950 px-1 py-0.5 rounded text-orange-400 font-mono">hauck-terra-logos</code> e marque como <strong>Público</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Passo 3 -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center font-bold text-sm">3</div>
+                    <div>
+                        <h4 class="font-semibold text-white text-base">Faça o Upload do seu index.html</h4>
+                        <p class="text-slate-400 text-xs mt-1">Na página do seu repositório criado:</p>
+                        <ul class="list-disc pl-5 text-xs text-slate-400 mt-1.5 space-y-1">
+                            <li>Clique em <strong class="text-slate-200">"uploading an existing file"</strong>.</li>
+                            <li>Arraste e solte o arquivo <code class="text-cyan-400">index.html</code>.</li>
+                            <li>Arraste também a imagem <code class="text-orange-400">cópia de neural_telemetry_orb_1780490653834.jpg</code> para a mesma pasta raiz se quiser que o cérebro venha carregado por padrão!</li>
+                            <li>Clique em <strong class="text-slate-200">"Commit changes"</strong> para salvar.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Passo 4 -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center font-bold text-sm">4</div>
+                    <div>
+                        <h4 class="font-semibold text-white text-base">Ative o GitHub Pages</h4>
+                        <p class="text-slate-400 text-xs mt-1">No topo do repositório no GitHub:</p>
+                        <ol class="list-decimal pl-5 text-xs text-slate-400 mt-1.5 space-y-1">
+                            <li>Vá na aba <strong class="text-slate-200">Settings</strong> (Configurações).</li>
+                            <li>No menu lateral esquerdo, clique em <strong class="text-slate-200">Pages</strong>.</li>
+                            <li>Em <strong>Build and deployment</strong> ➜ <strong>Source</strong>, selecione <span class="bg-slate-950 px-1 py-0.5 rounded font-mono text-cyan-300">Deploy from a branch</span>.</li>
+                            <li>Em <strong>Branch</strong>, altere de <span class="text-slate-400">None</span> para <strong class="text-slate-200">main</strong> (ou <strong class="text-slate-200">master</strong>) e a pasta para <strong class="text-slate-200">/ (root)</strong>.</li>
+                            <li>Clique no botão <strong class="text-emerald-400">Save</strong>.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Passo Final -->
+                <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center">
+                    <span class="text-xs text-emerald-400 font-semibold block uppercase tracking-wider">Prontinho! 🎉</span>
+                    <p class="text-xs text-slate-300 mt-1">Em cerca de 1 minuto seu link estará ativo em:</p>
+                    <code class="text-cyan-400 font-semibold text-xs break-all block mt-2 select-all">https://seu-usuario.github.io/seu-repositorio/</code>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t border-slate-800 bg-slate-950/40 text-center">
+                <button onclick="toggleGithubModal(false)" class="bg-slate-800 hover:bg-slate-750 text-white px-5 py-2 rounded-lg text-sm transition">
+                    Fechar Guia
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas Escondido para Renderizar e Baixar PNG -->
+    <canvas id="export-canvas" class="hidden"></canvas>
+
+    <script>
+        // Imagem do Cérebro (Default renderizado no Canvas se nenhum upload for feito)
+        let brainImageObj = null;
+        let isDefaultBrain = true;
+
+        // Controla exibição do Modal do GitHub
+        function toggleGithubModal(show) {
+            const modal = document.getElementById('github-modal');
+            if (show) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Ao carregar a página, desenha o cérebro default e inicializa estilos
+        window.addEventListener('load', () => {
+            initDefaultBrain();
+            updateBrandStyles();
+            
+            // Tentativa de carregar automaticamente a imagem do cérebro se ela estiver na mesma pasta (útil para o GitHub Pages!)
+            const img = new Image();
+            img.onload = function() {
+                brainImageObj = img;
+                isDefaultBrain = false;
+                const status = document.getElementById('upload-status');
+                if (status) {
+                    status.className = "p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 flex items-center gap-2";
+                    status.innerHTML = `<div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>Imagem "cópia de neural_telemetry_orb_1780490653834.jpg" carregada automaticamente da raiz!`;
+                }
+                drawUploadedBrain();
+            };
+            img.src = "cópia de neural_telemetry_orb_1780490653834.jpg"; // Procura na mesma pasta
+        });
+
+        // Gera uma bela simulação neural no Canvas como padrão caso o usuário não faça upload imediatamente
+        function initDefaultBrain() {
+            const canvases = [
+                document.getElementById('canvas-brain-icon-1'),
+                document.getElementById('canvas-brain-icon-2'),
+                document.getElementById('canvas-brain-icon-3'),
+                document.getElementById('canvas-brain-icon-4')
+            ];
+
+            canvases.forEach(canvas => {
+                const ctx = canvas.getContext('2d');
+                const w = canvas.width;
+                const h = canvas.height;
+
+                // Fundo Escuro Clínico/Futurista
+                ctx.fillStyle = '#050a12';
+                ctx.fillRect(0, 0, w, h);
+
+                // Brilho de fundo
+                const grad = ctx.createRadialGradient(w/2, h/2, 5, w/2, h/2, w/2);
+                grad.addColorStop(0, '#00334e');
+                grad.addColorStop(0.5, '#051224');
+                grad.addColorStop(1, '#000000');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, w, h);
+
+                // Desenha uma silhueta abstrata do cérebro brilhante em neon
+                ctx.strokeStyle = 'rgba(69, 182, 206, 0.45)';
+                ctx.lineWidth = 1.5;
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = '#45B6CE';
+
+                // Sulcos cerebrais simulados
+                ctx.beginPath();
+                ctx.arc(w/2, h/2 - 5, w/3.5, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Hemisfério Esquerdo / Direito (ondas abstratas)
+                ctx.strokeStyle = 'rgba(249, 143, 102, 0.4)';
+                ctx.shadowColor = '#F98F66';
+                ctx.beginPath();
+                for(let i = 0; i < 6; i++) {
+                    ctx.arc(w/2 - 10 + (i*3), h/2 + (i*2), 12 + (i*4), 0, Math.PI, true);
+                }
+                ctx.stroke();
+
+                // Sinapses (Pontos brilhantes)
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = '#45B6CE';
+                const nodes = [
+                    {x: w/2 - 20, y: h/2 - 15}, {x: w/2 + 20, y: h/2 - 20},
+                    {x: w/2, y: h/2 - 5}, {x: w/2 - 10, y: h/2 + 15},
+                    {x: w/2 + 25, y: h/2 + 10}, {x: w/2 - 30, y: h/2}
+                ];
+                nodes.forEach(pt => {
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Conexões neurais
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(nodes[0].x, nodes[0].y);
+                ctx.lineTo(nodes[2].x, nodes[2].y);
+                ctx.lineTo(nodes[3].x, nodes[3].y);
+                ctx.lineTo(nodes[5].x, nodes[5].y);
+                ctx.moveTo(nodes[1].x, nodes[1].y);
+                ctx.lineTo(nodes[2].x, nodes[2].y);
+                ctx.lineTo(nodes[4].x, nodes[4].y);
+                ctx.stroke();
+            });
+        }
+
+        // Lida com o upload do arquivo de imagem do usuário
+        function handleBrainUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    brainImageObj = img;
+                    isDefaultBrain = false;
+                    
+                    // Atualiza o banner de status
+                    const status = document.getElementById('upload-status');
+                    status.className = "p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 flex items-center gap-2";
+                    status.innerHTML = `<div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>Imagem "cópia de neural_telemetry_orb_1780490653834.jpg" aplicada com sucesso!`;
+
+                    // Desenha a imagem carregada em todos os canvases de ícone
+                    drawUploadedBrain();
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // Renderiza a imagem real enviada pelo usuário nos círculos
+        function drawUploadedBrain() {
+            if (!brainImageObj) return;
+
+            const canvases = [
+                document.getElementById('canvas-brain-icon-1'),
+                document.getElementById('canvas-brain-icon-2'),
+                document.getElementById('canvas-brain-icon-3'),
+                document.getElementById('canvas-brain-icon-4')
+            ];
+
+            canvases.forEach(canvas => {
+                const ctx = canvas.getContext('2d');
+                const w = canvas.width;
+                const h = canvas.height;
+
+                ctx.clearRect(0, 0, w, h);
+                
+                // Recorta imagem em formato circular perfeito
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(w/2, h/2, w/2, 0, Math.PI * 2);
+                ctx.clip();
+                
+                // Desenha a imagem centralizada
+                ctx.drawImage(brainImageObj, 0, 0, w, h);
+                ctx.restore();
+            });
+        }
+
+        // Sincroniza cores modificadas nos inputs
+        function updateBrandStyles() {
+            const colorBlue = document.getElementById('color-blue').value;
+            const colorOrange = document.getElementById('color-orange').value;
+
+            document.getElementById('color-blue-text').value = colorBlue;
+            document.getElementById('color-orange-text').value = colorOrange;
+
+            // Altera CSS Variables locais
+            document.documentElement.style.setProperty('--color-blue', colorBlue);
+            document.documentElement.style.setProperty('--color-orange', colorOrange);
+
+            // Atualiza os gradientes do SVG
+            document.querySelectorAll('.grad-stop-blue').forEach(stop => stop.setAttribute('stop-color', colorBlue));
+            document.querySelectorAll('.grad-stop-orange').forEach(stop => stop.setAttribute('stop-color', colorOrange));
+        }
+
+        function updateBrandStylesFromText() {
+            const colorBlue = document.getElementById('color-blue-text').value;
+            const colorOrange = document.getElementById('color-orange-text').value;
+
+            if (colorBlue.startsWith('#') && colorBlue.length === 7) {
+                document.getElementById('color-blue').value = colorBlue;
+            }
+            if (colorOrange.startsWith('#') && colorOrange.length === 7) {
+                document.getElementById('color-orange').value = colorOrange;
+            }
+            updateBrandStyles();
+        }
+
+        // Atualiza textos ao vivo
+        function updateBrandText() {
+            const titleText = document.getElementById('text-title').value;
+            const subtitleText = document.getElementById('text-subtitle').value;
+
+            document.querySelectorAll('.brand-title').forEach(el => el.textContent = titleText);
+            document.querySelectorAll('.brand-subtitle').forEach(el => el.textContent = subtitleText);
+        }
+
+        // ==========================================
+        // MOTOR DE EXPORTAÇÃO CANVAS (Download PNG)
+        // ==========================================
+        function downloadLogo(type, theme) {
+            const canvas = document.getElementById('export-canvas');
+            const ctx = canvas.getContext('2d');
+
+            const titleText = document.getElementById('text-title').value;
+            const subtitleText = document.getElementById('text-subtitle').value;
+            const colorBlue = document.getElementById('color-blue').value;
+            const colorOrange = document.getElementById('color-orange').value;
+
+            // Define resoluções profissionais altas (300 DPI equivalentes)
+            let width = 1600;
+            let height = 500;
+
+            if (type === 'brain-vertical') {
+                width = 1200;
+                height = 800;
+            } else if (type.startsWith('icon-')) {
+                width = 600;
+                height = 600;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            ctx.clearRect(0, 0, width, height);
+
+            // Fundo transparente ou sólido dependendo da necessidade do usuário
+            // (Para facilidade, exportamos transparente. Mas se for o "original escuro", podemos adicionar o fundo azul característico)
+            if (theme === 'escuro') {
+                ctx.fillStyle = '#1A2533'; // Azul escuro original
+                // Se for apenas o ícone sem fundo, pode ser transparente, mas para o logo principal o fundo original é excelente
+                if (type === 'original') {
+                    ctx.fillRect(0, 0, width, height);
+                }
+            }
+
+            // Ativa suavização máxima
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+
+            // Promessa para lidar com o desenho assíncrono antes de baixar
+            new Promise((resolve) => {
+                if (type === 'original') {
+                    drawOriginalOnCanvas(ctx, width, height, titleText, subtitleText, colorBlue, colorOrange);
+                    resolve();
+                } 
+                else if (type === 'mono-claro') {
+                    drawMonochromeOnCanvas(ctx, width, height, titleText, subtitleText, '#000000');
+                    resolve();
+                }
+                else if (type === 'brain-horizontal') {
+                    drawBrainHorizontalOnCanvas(ctx, width, height, titleText, subtitleText, () => resolve());
+                }
+                else if (type === 'brain-vertical') {
+                    drawBrainVerticalOnCanvas(ctx, width, height, titleText, subtitleText, colorBlue, colorOrange, () => resolve());
+                }
+                else if (type === 'icon-globe') {
+                    drawIconGlobeOnCanvas(ctx, width, height, colorBlue, colorOrange);
+                    resolve();
+                }
+                else if (type === 'icon-brain-pure') {
+                    drawIconBrainOnCanvas(ctx, width, height, false, colorBlue, colorOrange, () => resolve());
+                }
+                else if (type === 'icon-brain-ring') {
+                    drawIconBrainOnCanvas(ctx, width, height, true, colorBlue, colorOrange, () => resolve());
+                }
+            }).then(() => {
+                // Trigger Download
+                const link = document.createElement('a');
+                link.download = `HauckTerra_Logo_${type}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        // Função de desenho para Logo Original (Escuro)
+        function drawOriginalOnCanvas(ctx, w, h, title, subtitle, colorBlue, colorOrange) {
+            // Desenha Anel Gradiente
+            const iconSize = 140;
+            const iconX = 150;
+            const iconY = h / 2;
+
+            ctx.save();
+            const grad = ctx.createLinearGradient(iconX - iconSize/2, iconY - iconSize/2, iconX + iconSize/2, iconY + iconSize/2);
+            grad.addColorStop(0, colorBlue);
+            grad.addColorStop(1, colorOrange);
+
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 14;
+            ctx.beginPath();
+            ctx.arc(iconX, iconY, iconSize/2, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Fundo azul interno
+            ctx.fillStyle = '#1A2533';
+            ctx.beginPath();
+            ctx.arc(iconX, iconY, iconSize/2 - 7, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Desenha Globo Interno
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.arc(iconX, iconY, 32, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Linha horizontal
+            ctx.beginPath();
+            ctx.moveTo(iconX - 32, iconY);
+            ctx.lineTo(iconX + 32, iconY);
+            ctx.stroke();
+
+            // Curvas do meridiano
+            ctx.beginPath();
+            ctx.ellipse(iconX, iconY, 15, 32, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // Escreve Textos
+            writeTextsOnCanvas(ctx, iconX + 110, h/2, title, subtitle, '#FFFFFF', '#94A3B8');
+        }
+
+        // Função de desenho para Logo Monocromático
+        function drawMonochromeOnCanvas(ctx, w, h, title, subtitle, color) {
+            const iconSize = 140;
+            const iconX = 150;
+            const iconY = h / 2;
+
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 14;
+            ctx.beginPath();
+            ctx.arc(iconX, iconY, iconSize/2, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Desenha Globo Interno
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.arc(iconX, iconY, 32, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Linha horizontal
+            ctx.beginPath();
+            ctx.moveTo(iconX - 32, iconY);
+            ctx.lineTo(iconX + 32, iconY);
+            ctx.stroke();
+
+            // Curvas do meridiano
+            ctx.beginPath();
+            ctx.ellipse(iconX, iconY, 15, 32, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // Escreve Textos
+            writeTextsOnCanvas(ctx, iconX + 110, h/2, title, subtitle, color, '#475569');
+        }
+
+        // Desenha Logo com Cérebro Horizontal
+        function drawBrainHorizontalOnCanvas(ctx, w, h, title, subtitle, callback) {
+            const iconSize = 140;
+            const iconX = 150;
+            const iconY = h / 2;
+
+            drawBrainOnCanvas(ctx, iconX, iconY, iconSize, false, null, null, () => {
+                writeTextsOnCanvas(ctx, iconX + 110, h/2, title, subtitle, '#FFFFFF', '#94A3B8');
+                callback();
+            });
+        }
+
+        // Desenha Logo com Cérebro Vertical
+        function drawBrainVerticalOnCanvas(ctx, w, h, title, subtitle, colorBlue, colorOrange, callback) {
+            const iconSize = 180;
+            const iconX = w / 2;
+            const iconY = h / 2 - 100;
+
+            drawBrainOnCanvas(ctx, iconX, iconY, iconSize, true, colorBlue, colorOrange, () => {
+                // Alinhamento centralizado para o texto
+                ctx.save();
+                ctx.textAlign = 'center';
+                
+                // Título
+                ctx.font = '800 68px "Montserrat", "Arial Black", sans-serif';
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillText(title, w/2, h/2 + 130);
+
+                // Subtítulo
+                ctx.font = '400 24px "Montserrat", "Arial", sans-serif';
+                ctx.fillStyle = '#94A3B8';
+                
+                // Simula letter-spacing no Canvas
+                const chars = subtitle.toUpperCase().split('');
+                const letterSpacing = 8;
+                const textWidth = ctx.measureText(subtitle).width + (chars.length * letterSpacing);
+                
+                let startX = w/2 - textWidth/2;
+                ctx.textAlign = 'left';
+                chars.forEach(char => {
+                    ctx.fillText(char, startX, h/2 + 190);
+                    startX += ctx.measureText(char).width + letterSpacing;
+                });
+
+                ctx.restore();
+                callback();
+            });
+        }
+
+        // Desenha Ícone do Globo
+        function drawIconGlobeOnCanvas(ctx, w, h, colorBlue, colorOrange) {
+            const iconX = w / 2;
+            const iconY = h / 2;
+            const iconSize = w * 0.8;
+
+            ctx.save();
+            const grad = ctx.createLinearGradient(iconX - iconSize/2, iconY - iconSize/2, iconX + iconSize/2, iconY + iconSize/2);
+            grad.addColorStop(0, colorBlue);
+            grad.addColorStop(1, colorOrange);
+
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = w * 0.08;
+            ctx.beginPath();
+            ctx.arc(iconX, iconY, iconSize/2, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Fundo azul interno
+            ctx.fillStyle = '#1A2533';
+            ctx.beginPath();
+            ctx.arc(iconX, iconY, iconSize/2 - (w * 0.04), 0, Math.PI * 2);
+            ctx.fill();
+
+            // Desenha Globo Interno
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = w * 0.035;
+            ctx.beginPath();
+            ctx.arc(iconX, iconY, iconSize * 0.24, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Linha horizontal
+            ctx.beginPath();
+            ctx.moveTo(iconX - (iconSize * 0.24), iconY);
+            ctx.lineTo(iconX + (iconSize * 0.24), iconY);
+            ctx.stroke();
+
+            // Curvas do meridiano
+            ctx.beginPath();
+            ctx.ellipse(iconX, iconY, iconSize * 0.11, iconSize * 0.24, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Desenha Ícones do Cérebro (Puro ou com Anel)
+        function drawIconBrainOnCanvas(ctx, w, h, withRing, colorBlue, colorOrange, callback) {
+            const iconX = w / 2;
+            const iconY = h / 2;
+            const iconSize = w * 0.8;
+
+            drawBrainOnCanvas(ctx, iconX, iconY, iconSize, withRing, colorBlue, colorOrange, callback);
+        }
+
+        // Utilitário para renderizar a imagem do cérebro (real ou fallback) em qualquer coordenada do Canvas
+        function drawBrainOnCanvas(ctx, x, y, size, withRing, colorBlue, colorOrange, callback) {
+            ctx.save();
+
+            // Se for com o anel gradiente de fundo
+            if (withRing) {
+                const grad = ctx.createLinearGradient(x - size/2, y - size/2, x + size/2, y + size/2);
+                grad.addColorStop(0, colorBlue || '#45B6CE');
+                grad.addColorStop(1, colorOrange || '#F98F66');
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = size * 0.08;
+                ctx.beginPath();
+                ctx.arc(x, y, size/2, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Recorte circular para o cérebro
+            const clipRadius = withRing ? (size/2 - size*0.06) : (size/2);
+            ctx.beginPath();
+            ctx.arc(x, y, clipRadius, 0, Math.PI * 2);
+            ctx.clip();
+
+            if (!isDefaultBrain && brainImageObj) {
+                // Desenha imagem real enviada
+                ctx.drawImage(brainImageObj, x - clipRadius, y - clipRadius, clipRadius * 2, clipRadius * 2);
+                ctx.restore();
+                callback();
+            } else {
+                // Desenha a representação de simulação neural fallback de alta resolução
+                const bgGrad = ctx.createRadialGradient(x, y, 5, x, y, clipRadius);
+                bgGrad.addColorStop(0, '#051224');
+                bgGrad.addColorStop(1, '#000000');
+                ctx.fillStyle = bgGrad;
+                ctx.fillRect(x - clipRadius, y - clipRadius, clipRadius*2, clipRadius*2);
+
+                ctx.strokeStyle = 'rgba(69, 182, 206, 0.7)';
+                ctx.lineWidth = size * 0.012;
+                ctx.shadowBlur = size * 0.06;
+                ctx.shadowColor = '#45B6CE';
+
+                // Sulco principal
+                ctx.beginPath();
+                ctx.arc(x, y - (size*0.03), clipRadius * 0.7, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Ondas
+                ctx.strokeStyle = 'rgba(249, 143, 102, 0.6)';
+                ctx.shadowColor = '#F98F66';
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    ctx.arc(x - (size*0.06) + (i * size * 0.02), y + (i * size * 0.015), size*0.08 + (i * size * 0.025), 0, Math.PI, true);
+                }
+                ctx.stroke();
+
+                // Pontos
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowBlur = size * 0.08;
+                ctx.shadowColor = '#45B6CE';
+                const nodes = [
+                    {x: x - size*0.14, y: y - size*0.1}, {x: x + size*0.14, y: y - size*0.15},
+                    {x: x, y: y - size*0.03}, {x: x - size*0.07, y: y + size*0.1},
+                    {x: x + size*0.18, y: y + size*0.07}, {x: x - size*0.2, y: y}
+                ];
+                nodes.forEach(pt => {
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, size * 0.018, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                ctx.restore();
+                callback();
+            }
+        }
+
+        // Escreve os textos com alinhamento e proporções exatas no Canvas
+        function writeTextsOnCanvas(ctx, startX, centerY, title, subtitle, titleColor, subtitleColor) {
+            ctx.save();
+            ctx.textBaseline = 'middle';
+            
+            // Título Principal
+            ctx.font = '800 68px "Montserrat", "Arial Black", sans-serif';
+            ctx.fillStyle = titleColor;
+            ctx.fillText(title, startX, centerY - 20);
+
+            // Subtítulo
+            ctx.font = '400 22px "Montserrat", "Arial", sans-serif';
+            ctx.fillStyle = subtitleColor;
+            
+            // Simula letter-spacing
+            const chars = subtitle.toUpperCase().split('');
+            const letterSpacing = 8;
+            let currentX = startX;
+            chars.forEach(char => {
+                ctx.fillText(char, currentX, centerY + 45);
+                currentX += ctx.measureText(char).width + letterSpacing;
+            });
+
+            ctx.restore();
+        }
+    </script>
+</body>
+</html>
